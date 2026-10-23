@@ -1,0 +1,367 @@
+# Second Opinion — AI Scam Checker
+
+An AI-powered tool that helps people identify suspicious messages, understand potential scam indicators, and make safer decisions before clicking links or sending money.
+
+**Project status:** Hackathon prototype in development. Features, test results, and deployment details will be updated as they are implemented and verified.
+
+---
+
+## 1. Overview
+
+Second Opinion is an AI-assisted scam detection application designed to help people evaluate suspicious messages before acting on them.
+
+Users can submit a suspicious text message and, where supported by the implementation, a URL for analysis. The application examines potential warning signs, combines model-generated analysis with deterministic checks, and returns a clear explanation of the findings.
+
+Rather than simply labelling a message as a scam, Second Opinion aims to explain why a message may be suspicious and what the user should do next.
+
+The project uses an NVIDIA Nemotron open model through Nebius Token Factory to analyse message content and generate plain-English explanations.
+
+### The problem
+
+Online scams often exploit urgency, impersonation, misleading links, and requests for money or personal information. Many people struggle to distinguish legitimate communications from fraudulent ones, especially when messages imitate trusted organisations.
+
+Second Opinion aims to make scam awareness more accessible by providing an additional layer of analysis before a user takes action.
+
+### Our approach
+
+*   Analyse suspicious message text.
+*   Identify potential scam indicators and suspicious URL patterns.
+*   Explain findings in plain English.
+*   Communicate uncertainty rather than promising perfect detection.
+*   Recommend cautious next steps that users can take independently.
+
+---
+
+## 2. Goals and target audience
+
+### Target audience
+
+*   People who receive suspicious text messages or emails.
+*   Students and young adults who shop, communicate, and transact online.
+*   Older adults and people who want additional help evaluating unfamiliar messages.
+*   Families supporting relatives who may be vulnerable to scams.
+*   Anyone who wants a second opinion before interacting with a suspicious message.
+
+### Project goals
+
+1.  Make scam analysis understandable to non-technical users.
+2.  Explain the evidence behind each assessment.
+3.  Combine AI interpretation with transparent, rule-based checks.
+4.  Handle uncertain cases responsibly.
+5.  Demonstrate how open AI models can support practical fraud-awareness tools.
+
+---
+
+## 3. How it works
+
+The planned prototype follows a simple analysis pipeline:
+
+1.  **Input:** The user pastes a suspicious message and optionally provides a URL.
+2.  **Preprocessing:** The application validates the input and extracts URLs and relevant indicators.
+3.  **Deterministic checks:** Conventional code examines URL structure and selected warning signs.
+4.  **AI analysis:** NVIDIA Nemotron analyses the message for possible manipulation, impersonation, urgency, and other suspicious language.
+5.  **Evidence synthesis:** The application combines available findings into a structured assessment.
+6.  **Explanation:** The user receives a verdict, supporting evidence, uncertainty information, and suggested next steps.
+
+### Possible verdicts
+
+| Verdict | Meaning |
+| :--- | :--- |
+| **Likely scam** | Multiple indicators suggest that the message may be fraudulent. |
+| **Suspicious** | Some warning signs exist, but the available evidence is inconclusive. |
+| **No red flags found** | The current checks did not identify sufficient warning signs. This does not establish that the message is legitimate. |
+
+*The verdicts are assessments, not guarantees.*
+
+---
+
+## 4. Technology stack
+
+The following is the proposed stack for the initial web prototype. The final repository should reflect the technologies actually implemented.
+
+| Component | Proposed technology | Purpose |
+| :--- | :--- | :--- |
+| **Frontend** | React / Next.js with TypeScript | User interface and analysis results |
+| **Backend** | Next.js server-side API routes | Secure processing and model requests |
+| **AI model** | NVIDIA Nemotron, selected from Nebius catalogue | Message analysis and explanations |
+| **AI inference** | Nebius Token Factory | Hosted model inference |
+| **Input validation** | TypeScript schemas, such as Zod | Validate input and structured model output |
+| **URL analysis** | Native URL parsing and deterministic checks | Identify potential URL warning signs |
+| **Testing** | Vitest or repository test framework | Test analysis logic and edge cases |
+| **Deployment** | To be selected | Host the web application |
+
+### Why NVIDIA Nemotron?
+
+Nemotron provides an open-model foundation for reasoning and language-analysis tasks. Through Nebius Token Factory, developers can access supported models using an OpenAI-compatible API. This makes it practical to integrate model inference without managing GPU infrastructure during a short hackathon.
+
+*The selected model must be confirmed in the live Token Factory catalogue before implementation.*
+
+---
+
+## 5. Architecture
+
+The initial prototype is designed around a single analysis workflow rather than a complex network of autonomous agents.
+
+```mermaid
+flowchart TD
+    A[User submits suspicious message] --> B[Input validation]
+    B --> C[Extract URLs and indicators]
+    C --> D[Deterministic checks]
+    C --> E[NVIDIA Nemotron via Nebius]
+    D --> F[Evidence synthesis]
+    E --> F
+    F --> G[Structured result validation]
+    G --> H[Verdict and supporting evidence]
+    H --> I[Plain-English explanation]
+    I --> J[Suggested next steps]
+```
+
+### Separation of responsibilities
+
+**Deterministic code**
+*   Validates user input.
+*   Extracts URLs.
+*   Checks URL structure and selected indicators.
+*   Validates the format of model responses.
+*   Combines evidence according to explicit application rules.
+
+**AI model**
+*   Interprets suspicious language.
+*   Identifies possible social-engineering tactics.
+*   Explains why individual indicators may matter.
+*   Produces a structured assessment for the application to validate.
+
+The model does not independently establish that a message is fraudulent. Its conclusions must be considered alongside the available evidence.
+
+---
+
+## 6. NVIDIA and Nebius integration
+
+Second Opinion is designed to use a supported NVIDIA Nemotron model through Nebius Token Factory at runtime.
+
+### Configuration
+
+Create an API key through the official Nebius Token Factory platform.
+
+Configure the following environment variables on the server:
+
+```env
+NEBIUS_API_KEY=your_api_key_here
+NEBIUS_BASE_URL=https://api.tokenfactory.us-central1.nebius.com/v1/
+NEBIUS_MODEL=nvidia/Nemotron-3_5-Lightning
+```
+
+**Important:** The model ID and endpoint above are proposed defaults based on published Nebius documentation. Confirm the currently available model ID and endpoint against your account before running the application.
+
+The API key must remain on the server and must never be included in client-side JavaScript, committed to Git, or embedded in a public demo.
+
+The actual implementation should make a genuine inference request to Token Factory whenever the user runs an AI analysis.
+
+---
+
+## 7. Getting started
+
+### Prerequisites
+
+*   Node.js and npm.
+*   Git.
+*   Access to Nebius Token Factory.
+*   A valid API key and a supported model.
+*   The project source code.
+
+### Installation
+
+Clone the repository:
+
+```bash
+git clone <YOUR_PUBLIC_REPOSITORY_URL>
+cd second-opinion
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a local environment file:
+
+```bash
+cp .env.example .env.local
+```
+
+Add your own API key and verify the model configuration in `.env.local`.
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open the local URL printed by the development server, commonly `http://localhost:3000` for a Next.js application.
+
+*(These commands assume the repository uses Next.js and defines the relevant scripts. Adjust them if the final implementation uses a different framework.)*
+
+### Environment variables
+
+| Variable | Description |
+| :--- | :--- |
+| `NEBIUS_API_KEY` | Secret used to authenticate model requests |
+| `NEBIUS_BASE_URL` | Token Factory API base URL |
+| `NEBIUS_MODEL` | Supported model identifier |
+
+Keep `.env.local` out of version control. Commit an `.env.example` containing placeholder values only.
+
+---
+
+## 8. Testing and evaluation
+
+Testing is essential because scam detection can produce both false positives and false negatives.
+
+The project should be evaluated using a curated collection of scam-like and legitimate messages. The dataset should be documented, and results should be reported honestly.
+
+### Planned test categories
+
+| Category | What to test |
+| :--- | :--- |
+| **Scam-like messages** | Urgent payment requests, impersonation, suspicious links |
+| **Legitimate messages** | Ordinary messages that should not automatically be flagged |
+| **Ambiguous messages** | Inputs that lack enough evidence for a confident assessment |
+| **URL handling** | Malformed URLs, lookalike domains, missing schemes |
+| **Model responses** | Missing fields, malformed JSON, unexpected output |
+| **Adversarial inputs** | Messages containing instructions that attempt to manipulate the AI |
+| **API failures** | Invalid credentials, timeouts, rate limits, unavailable models |
+| **Privacy** | Unnecessary logging or retention of submitted content |
+
+### Test results
+
+**Status:** Not yet reported.
+
+Do not publish accuracy percentages or claim that the system passes these tests until they have actually been run.
+
+When evaluation is complete, record:
+
+*   Number of examples tested.
+*   Number of scam-like examples correctly flagged.
+*   Number of legitimate examples incorrectly flagged.
+*   Number of scam-like examples missed.
+*   Cases where the system appropriately expressed uncertainty.
+*   Known limitations and changes made after testing.
+
+A small test set is useful for a hackathon demonstration, but it does not establish real-world effectiveness across all scam types.
+
+---
+
+## 9. Privacy and safety
+
+Second Opinion is intended to help users make more informed decisions, not to replace their judgement or official guidance.
+
+The prototype should follow these principles:
+
+*   **No guarantees:** Never describe a message as definitely safe.
+*   **Data minimisation:** Process only the information required for analysis.
+*   **Secure credentials:** Keep API keys and other secrets server-side.
+*   **Untrusted input:** Treat submitted messages as evidence, never as instructions that override the application’s rules.
+*   **Transparent reasoning:** Show supporting indicators and explain uncertainty.
+*   **Careful URL handling:** Do not blindly fetch arbitrary URLs from the backend. Use safe URL analysis or a trusted reputation service with appropriate safeguards.
+*   **Responsible recommendations:** Encourage users to verify requests through independently obtained official contact details.
+
+For the hackathon prototype, use synthetic or appropriately sourced examples wherever possible. Do not submit passwords, verification codes, or sensitive financial information for testing.
+
+---
+
+## 10. Current scope and limitations
+
+The initial target is a functional web prototype with a complete message-analysis workflow.
+
+### Planned for the initial prototype
+
+*   Text input.
+*   Optional URL analysis.
+*   AI-assisted message analysis.
+*   Rule-based indicators.
+*   A structured verdict and explanation.
+*   Error handling and a repeatable test set.
+
+### Outside the initial scope (unless implemented separately)
+
+*   WhatsApp or SMS forwarding.
+*   Email inbox integration.
+*   Live telephone-call analysis.
+*   Automatic blocking or reporting.
+*   Comprehensive real-time threat intelligence.
+*   A production-grade multi-agent orchestration system.
+*   Guaranteed scam detection or complete protection against fraud.
+
+The system may misclassify messages, lack current threat intelligence, or fail to identify unfamiliar scam techniques. These limitations must be visible in the final product.
+
+---
+
+## 11. Project status
+
+This section should be updated as the team implements and verifies each feature.
+
+| Milestone | Status |
+| :--- | :--- |
+| Project concept and initial architecture | Defined |
+| Frontend implementation | To be verified |
+| Token Factory model integration | To be verified |
+| Deterministic checks | To be verified |
+| End-to-end testing | To be verified |
+| Deployment | To be verified |
+| Public demo video | To be added |
+
+*Only change a milestone to completed after verifying it in the actual application.*
+
+---
+
+## 12. Team and contribution
+
+Second Opinion was proposed by Oti as a project to make scam awareness more accessible.
+
+The project is being developed by a team of three for a hackathon. Add each contributor’s name, role, and relevant contribution here:
+
+*   **Product and frontend:** [Contributor name]
+*   **AI and backend:** [Contributor name]
+*   **Logic, testing and documentation:** [Contributor name]
+
+*Update these roles to reflect the team’s actual contributions.*
+
+---
+
+## 13. Demo and links
+
+*   **Live demo:** [Add public demo URL when deployed]
+*   **Demo video:** [Add public YouTube URL when published]
+*   **Source repository:** [Add public repository URL]
+*   **Project submission:** [Add hackathon submission URL]
+
+*These links are placeholders until the corresponding resources exist.*
+
+---
+
+## 14. Development history
+
+If the project is developed during the hackathon, document the major implementation milestones and decisions.
+
+If an earlier version existed, describe the work completed during the eligible hackathon period honestly. For example, record the addition of the real Token Factory integration, deterministic checks, evidence-based results, evaluation tests, and privacy safeguards only if those changes were actually made.
+
+Do not claim that existing work was built during the hackathon if it was completed beforehand.
+
+---
+
+## 15. Licence
+
+The application code may be released under the MIT License if the team chooses that licence and has the rights to license all included code.
+
+Before publishing, add a `LICENSE` file and verify the applicable terms for dependencies, datasets, and the selected NVIDIA model. The application-code licence does not replace or override the model’s own licence.
+
+---
+
+### Our vision
+
+Second Opinion aims to make scam awareness more understandable, accessible, and evidence-driven.
+
+By combining open AI models, conventional software checks, transparent explanations, and careful handling of uncertainty, we want to help people pause, evaluate suspicious communications, and make safer decisions online.
+
+**Second Opinion — Think twice. Check first.**
